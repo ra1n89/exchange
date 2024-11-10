@@ -4,14 +4,13 @@ import ru.exchange.model.Currensy;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
-public class DbDao implements Dao {
+public class JdbcCurrencyCurrencyDao implements CurrencyDao {
     // Implement methods for CRUD operations (create, read, update, delete) for entities
     Connection connection;
 
-    public DbDao() {
+    public JdbcCurrencyCurrencyDao() {
         // Initialize the database connection
         // Replace "sample.db" with your actual SQLite database file path
         try {
@@ -121,8 +120,8 @@ public class DbDao implements Dao {
                 "full_name VARCHAR NOT NULL)";
 
 
-        String sqlDropExcangeRatesTable = "DROP TABLE IF EXISTS exchangeRates";
-        String sqlCreateExcangeRatesTable = "CREATE TABLE exchangeRates (id INTEGER PRIMARY KEY, " +
+        String sqlDropExcangeRatesTable = "DROP TABLE IF EXISTS exchange_rates";
+        String sqlCreateExcangeRatesTable = "CREATE TABLE exchange_rates (id INTEGER PRIMARY KEY, " +
                 "base_currency_id INTEGER, " +
                 "target_currency_id INTEGER," +
                 "rate REAL," +

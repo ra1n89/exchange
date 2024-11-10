@@ -2,6 +2,7 @@ package ru.exchange.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import ru.exchange.model.Currensy;
 import ru.exchange.service.CurrencyService;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 
+@WebServlet("/currencies/*")
 public class CurrencyServlet extends HttpServlet {
 
     CurrencyService currencyService = new CurrencyService();

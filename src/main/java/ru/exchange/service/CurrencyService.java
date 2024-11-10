@@ -1,34 +1,33 @@
 package ru.exchange.service;
 
-import ru.exchange.dao.Dao;
-import ru.exchange.dao.DbDao;
+import ru.exchange.dao.CurrencyDao;
+import ru.exchange.dao.JdbcCurrencyCurrencyDao;
 import ru.exchange.model.Currensy;
 
 import java.sql.SQLException;
-import java.util.Currency;
 import java.util.List;
 
 public class CurrencyService {
-    Dao dao = new DbDao();
+    CurrencyDao currencyDao = new JdbcCurrencyCurrencyDao();
 
     public List<Currensy> getAll() {
-        return dao.getAll();
+        return currencyDao.getAll();
     }
 
     public Currensy save(Currensy currency) throws SQLException {
-        return dao.save(currency);
+        return currencyDao.save(currency);
     }
 
     public boolean delete(int id) {
-        return dao.delete(id);
+        return currencyDao.delete(id);
     }
 
     public  void createTable() {
-        dao.createTable();
+        currencyDao.createTable();
     }
 
     public Currensy getCurrencyByCode(String code) throws SQLException {
-        return dao.getCurrencyByCode(code);
+        return currencyDao.getCurrencyByCode(code);
     }
 
 }
