@@ -44,7 +44,7 @@ public class CurrencyServlet extends HttpServlet {
             String currensJson = new ObjectMapper().writeValueAsString(currens);
             resp.getWriter().println(currens);
         }
-        resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
+       // resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
     }
 
     @Override

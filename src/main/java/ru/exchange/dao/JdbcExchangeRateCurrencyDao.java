@@ -1,14 +1,14 @@
 package ru.exchange.dao;
 
+import ru.exchange.model.Currensy;
 import ru.exchange.model.ExchangeRate;
+import ru.exchange.to.ExchangeRateTo;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcExchangeRateCurrencyDao implements ExchangeDao{
+public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
 
     Connection connection;
 
@@ -53,14 +53,68 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao{
     }
 
     @Override
-    public ExchangeRate getCurrencyByCode(String code) throws SQLException {
-        return null;
+    public ExchangeRateTo getCurrencyByCode(String code) throws SQLException {
+        String baseCurrency = code.substring(0, 3);
+        String targetCurrency = code.substring(3, 6);
+
+        CurrencyDao currensyDao = new JdbcCurrencyCurrencyDao();
+        Currensy baseCurrencyId = currensyDao.getCurrencyByCode(baseCurrency);
+        Currensy targetCurrencyId = currensyDao.getCurrencyByCode(targetCurrency);
+        //System.out.println(baseCurrency + "id=" + baseCurrencyId + " " + targetCurrency + " id=" + targetCurrencyId ) ;
+
+        String sql = "SELECT * FROM exchange_rates WHERE base_currency_id = ? AND target_currency_id = ?";
+
+        ExchangeRateTo exchangeRateTo;
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, baseCurrencyId.getId());
+            statement.setInt(2, targetCurrencyId.getId());
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int idFromTable = resultSet.getInt(1);
+                int baseCurrencyIdFromTable = resultSet.getInt(2);
+                int targetCurrencyIdFromTable = resultSet.getInt(3);
+                double rateFromTable = resultSet.getDouble(4);
+                exchangeRateTo = new ExchangeRateTo(baseCurrencyIdFromTable, targetCurrencyIdFromTable, List.of(baseCurrencyId, targetCurrencyId), rateFromTable);
+                exchangeRateTo.setId(idFromTable);
+            } else {
+                throw new SQLException("Currency not found");
+            }
+
+
+        } catch (SQLException e) {
+            throw e;
+        }
+        return exchangeRateTo;
     }
 
     @Override
     public List<ExchangeRate> getAll() {
-        return null;
+        List<ExchangeRate> rateList = new ArrayList<>();
+        String sql = "SELECT * FROM exchange_rates";
+        int id;
+        int baseCurrencyId;
+        int targetCurrencyId;
+        Double rate;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                id = resultSet.getInt("id");
+                baseCurrencyId = resultSet.getInt("base_currency_id");
+                targetCurrencyId = resultSet.getInt("target_currency_id");
+                rate = resultSet.getDouble("rate");
+                ExchangeRate exchangeRate = new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
+                exchangeRate.setId(id);
+                rateList.add(exchangeRate);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return rateList;
     }
+
+
 }
 
 
