@@ -18,6 +18,15 @@
         <servlet-name>Servlet</servlet-name>
         <url-pattern>/hello</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>CurrencyServlet</servlet-name>
+        <servlet-class>ru.exchange.web.CurrencyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CurrencyServlet</servlet-name>
+        <url-pattern>/currencies/*</url-pattern>
+    </servlet-mapping>
+
 
 
 </web-app>

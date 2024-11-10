@@ -3,6 +3,9 @@ package ru.exchange.dao;
 import ru.exchange.model.Currensy;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 
 public class DbDao implements Dao {
     // Implement methods for CRUD operations (create, read, update, delete) for entities
@@ -25,8 +28,8 @@ public class DbDao implements Dao {
         }
     }
 
-    public Currensy save(Currensy currensy) {
-        String sql = "INSERT INTO currencies (code, sign, full_name) VALUES (?, ?, ?)" ;
+    public Currensy save(Currensy currensy) throws SQLException {
+        String sql = "INSERT INTO currencies (code, sign, full_name) VALUES (?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, currensy.getCode());
@@ -35,7 +38,7 @@ public class DbDao implements Dao {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
 
 
@@ -56,42 +59,86 @@ public class DbDao implements Dao {
     }
 
     @Override
-    public Currensy getById(int id) {
-        String sql = "SELECT * FROM currencies WHERE id =?";
+    public Currensy getCurrencyByCode(String code) throws SQLException {
+        String sql = "SELECT * FROM currencies WHERE code =?";
         Currensy currensy;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
+            statement.setString(1, code);
             ResultSet resultSet = statement.executeQuery();
-            String idFromTable = resultSet.getString(1);
-            String code = resultSet.getString(2);
-            String sign = resultSet.getString(3);
-            String fullName = resultSet.getString(4);
-            currensy = new Currensy(code, sign, fullName);
-            currensy.setId(Integer.parseInt(idFromTable));
+            if (resultSet.next()) {
+                String idFromTable = resultSet.getString(1);
+                String codeFromTable = resultSet.getString(2);
+                String sign = resultSet.getString(3);
+                String fullName = resultSet.getString(4);
+                currensy = new Currensy(codeFromTable, sign, fullName);
+                currensy.setId(Integer.parseInt(idFromTable));
+            } else {
+                throw new SQLException("Currency not found");
+            }
+
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
         return currensy;
     }
 
+    @Override
+    public List<Currensy> getAll() {
 
+        List<Currensy> currensyList = new ArrayList<Currensy>();
+        String sql = "SELECT * FROM currencies";
+        int id;
+        String code;
+        String sign;
+        String fullName;
 
-    public void createTable() {
-        System.out.println(System.getProperty("user.dir"));
-        String sqlDrop = "DROP TABLE IF EXISTS currencies ";
-        String sqlCreate = "CREATE TABLE currencies (id INTEGER PRIMARY KEY, " +
-                "code INTEGER, " +
-                "sign VARCHAR," +
-                "full_name VARCHAR)";
-
-        try (Statement statement = connection.createStatement()) {
-            System.out.println(statement.execute(sqlDrop));
-            System.out.println(statement.execute(sqlCreate));
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                id = resultSet.getInt("id");
+                code = resultSet.getString("code");
+                sign = resultSet.getString("sign");
+                fullName = resultSet.getString("full_name");
+                Currensy currensy = new Currensy(code, sign, fullName);
+                currensy.setId(id);
+                currensyList.add(currensy);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+        return currensyList;
+    }
+
+
+    public void createTable() {
+        System.out.println(System.getProperty("user.dir"));
+        String sqlDropСurrencyTable = "DROP TABLE IF EXISTS currencies";
+        String sqlCreateCurrencyTable = "CREATE TABLE currencies (id INTEGER PRIMARY KEY, " +
+                "code INTEGER UNIQUE NOT NULL , " +
+                "sign VARCHAR NOT NULL ," +
+                "full_name VARCHAR NOT NULL)";
+
+
+        String sqlDropExcangeRatesTable = "DROP TABLE IF EXISTS exchangeRates";
+        String sqlCreateExcangeRatesTable = "CREATE TABLE exchangeRates (id INTEGER PRIMARY KEY, " +
+                "base_currency_id INTEGER, " +
+                "target_currency_id INTEGER," +
+                "rate REAL," +
+                "FOREIGN KEY (base_currency_id) REFERENCES currencies (id) ON DELETE CASCADE," +
+                "FOREIGN KEY (target_currency_id) REFERENCES currencies (id) ON DELETE CASCADE)";
+
+
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(sqlDropExcangeRatesTable);
+            statement.execute(sqlDropСurrencyTable);
+            statement.execute(sqlCreateCurrencyTable);
+            statement.execute(sqlCreateExcangeRatesTable);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

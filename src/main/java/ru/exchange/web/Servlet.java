@@ -7,24 +7,32 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.exchange.dao.DbDao;
 import ru.exchange.model.Currensy;
+import ru.exchange.service.CurrencyService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 public class Servlet extends HttpServlet {
-    DbDao dbDao = new DbDao();
+
+    CurrencyService currencyService = new CurrencyService();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("hello");
-        dbDao.createTable();
-        dbDao.save(new Currensy("AUD", "Australian dollar", "A$"));
-        dbDao.save(new Currensy("RUB", "Rubley", "RU"));
-        System.out.println(dbDao.getById(2));
+        currencyService.createTable();
+        try {
+            currencyService.save(new Currensy("AUD", "Australian dollar", "A$"));
+            currencyService.save(new Currensy("RUB", "Rubley", "RU"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        //System.out.println(dbDao.getById(2));
         //resp.sendRedirect("/json.jsp");
-        String json = new ObjectMapper().writeValueAsString(dbDao.getById(2));
+       /* String json = new ObjectMapper().writeValueAsString(dbDao.get(2));
         resp.setContentType("application/json");
         PrintWriter printWriter = resp.getWriter();
-        printWriter.print(json);
-
+        printWriter.print(json);*/
     }
 }
