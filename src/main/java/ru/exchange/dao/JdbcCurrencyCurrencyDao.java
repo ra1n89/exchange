@@ -125,8 +125,9 @@ public class JdbcCurrencyCurrencyDao implements CurrencyDao {
                 "base_currency_id INTEGER, " +
                 "target_currency_id INTEGER," +
                 "rate REAL," +
-                "FOREIGN KEY (base_currency_id) REFERENCES currencies (id) ON DELETE CASCADE," +
-                "FOREIGN KEY (target_currency_id) REFERENCES currencies (id) ON DELETE CASCADE)";
+                "FOREIGN KEY (base_currency_id) REFERENCES currencies (id) ON DELETE CASCADE, " +
+                "FOREIGN KEY (target_currency_id) REFERENCES currencies (id) ON DELETE CASCADE, " +
+                "UNIQUE (base_currency_id, target_currency_id))";
 
 
         try (Statement statement = connection.createStatement()) {

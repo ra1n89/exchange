@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface CurrencyDao {
     Currensy save(Currensy currensy) throws SQLException;
+
     boolean delete(int id);
     Currensy getCurrencyByCode(String code) throws SQLException;
     List<Currensy> getAll();

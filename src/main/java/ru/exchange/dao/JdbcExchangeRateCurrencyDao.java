@@ -48,6 +48,20 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
     }
 
     @Override
+    public boolean update(ExchangeRate exchangeRate) {
+        String sql = "UPDATE exchange_rates SET rate = ? WHERE base_currency_id = ? AND target_currency_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setDouble(1, exchangeRate.getRate());
+            statement.setInt(2, exchangeRate.getBaseCurrencyId());
+            statement.setInt(3, exchangeRate.getTargetCurrencyId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    @Override
     public boolean delete(int id) {
         return false;
     }
