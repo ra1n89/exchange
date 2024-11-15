@@ -1,14 +1,21 @@
 package ru.exchange.service;
 
 import ru.exchange.dao.CurrencyDao;
-import ru.exchange.dao.JdbcCurrencyCurrencyDao;
+import ru.exchange.dao.JdbcCurrencyDao;
 import ru.exchange.model.Currensy;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class CurrencyService {
-    CurrencyDao currencyDao = new JdbcCurrencyCurrencyDao();
+
+    CurrencyDao currencyDao = JdbcCurrencyDao.getInstance();
+
+    static private CurrencyService CURRENCY_SERVICE = new CurrencyService();
+
+    private CurrencyService() {
+
+    }
 
     public List<Currensy> getAll() {
         return currencyDao.getAll();
@@ -28,6 +35,10 @@ public class CurrencyService {
 
     public Currensy getCurrencyByCode(String code) throws SQLException {
         return currencyDao.getCurrencyByCode(code);
+    }
+
+    public static CurrencyService getCurrencyService(){
+        return CURRENCY_SERVICE;
     }
 
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @WebServlet("/currencies/*")
 public class CurrencyServlet extends HttpServlet {
 
-    CurrencyService currencyService = new CurrencyService();
+    CurrencyService currencyService = CurrencyService.getCurrencyService();
 
 
     @Override

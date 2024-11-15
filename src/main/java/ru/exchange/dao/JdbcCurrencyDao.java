@@ -6,11 +6,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcCurrencyCurrencyDao implements CurrencyDao {
+public class JdbcCurrencyDao implements CurrencyDao {
     // Implement methods for CRUD operations (create, read, update, delete) for entities
     Connection connection;
 
-    public JdbcCurrencyCurrencyDao() {
+    static private JdbcCurrencyDao JDBC_CURRENCY_DAO = new JdbcCurrencyDao();
+
+
+    private JdbcCurrencyDao() {
         // Initialize the database connection
         // Replace "sample.db" with your actual SQLite database file path
         try {
@@ -139,6 +142,9 @@ public class JdbcCurrencyCurrencyDao implements CurrencyDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    static public JdbcCurrencyDao getInstance(){
+        return JDBC_CURRENCY_DAO;
     }
 
 }

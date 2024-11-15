@@ -17,8 +17,8 @@ import java.sql.SQLException;
 @WebServlet("/hello")
 public class Servlet extends HttpServlet {
 
-    CurrencyService currencyService = new CurrencyService();
-    ExchangeDao exchangeDao = new JdbcExchangeRateCurrencyDao();
+    CurrencyService currencyService =  CurrencyService.getCurrencyService();
+    ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

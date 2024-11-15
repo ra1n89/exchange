@@ -11,8 +11,9 @@ import java.util.List;
 public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
 
     Connection connection;
+    private static final JdbcExchangeRateCurrencyDao JDBC_EXCHANGE_RATE_CURRENCY_DAO = new JdbcExchangeRateCurrencyDao();
 
-    public JdbcExchangeRateCurrencyDao() {
+    private JdbcExchangeRateCurrencyDao() {
         // Initialize the database connection
         // Replace "sample.db" with your actual SQLite database file path
         try {
@@ -71,7 +72,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         String baseCurrency = code.substring(0, 3);
         String targetCurrency = code.substring(3, 6);
 
-        CurrencyDao currensyDao = new JdbcCurrencyCurrencyDao();
+        CurrencyDao currensyDao = JdbcCurrencyDao.getInstance();
         Currensy baseCurrencyId = currensyDao.getCurrencyByCode(baseCurrency);
         Currensy targetCurrencyId = currensyDao.getCurrencyByCode(targetCurrency);
         //System.out.println(baseCurrency + "id=" + baseCurrencyId + " " + targetCurrency + " id=" + targetCurrencyId ) ;
@@ -128,6 +129,9 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         return rateList;
     }
 
+    public static JdbcExchangeRateCurrencyDao getInstance() {
+        return JDBC_EXCHANGE_RATE_CURRENCY_DAO;
+    }
 
 }
 

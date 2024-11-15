@@ -9,9 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.exchange.dao.CurrencyDao;
 import ru.exchange.dao.ExchangeDao;
-import ru.exchange.dao.JdbcCurrencyCurrencyDao;
+import ru.exchange.dao.JdbcCurrencyDao;
 import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
-import ru.exchange.model.Currensy;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.to.ExchangeRateTo;
 
@@ -19,15 +18,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeServlet extends HttpServlet {
 
-    ExchangeDao exchangeDao = new JdbcExchangeRateCurrencyDao();
-    CurrencyDao currencyDao = new JdbcCurrencyCurrencyDao();
+    ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
+    CurrencyDao currencyDao = JdbcCurrencyDao.getInstance();
 
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
