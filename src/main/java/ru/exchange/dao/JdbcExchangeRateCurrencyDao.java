@@ -129,6 +129,26 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         return rateList;
     }
 
+    public boolean isExist(String baseCurrency, String  targetCurrency){
+        CurrencyDao currensyDao = JdbcCurrencyDao.getInstance();
+
+        String sql = "SELECT EXISTS (SELECT 1 FROM exchange_rates WHERE base_currency_id = ? AND target_currency_id = ?)";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            int baseCurrencyId = currensyDao.getCurrencyByCode(baseCurrency).getId();
+            int targetCurrencyId = currensyDao.getCurrencyByCode(targetCurrency).getId();
+            statement.setInt(1, baseCurrencyId);
+            statement.setInt(2, targetCurrencyId);
+            ResultSet resultSet = statement.executeQuery();
+            System.out.println(resultSet);
+            return resultSet.getBoolean(1);
+        } catch (Exception e) {
+
+            return false;
+        }
+
+    }
+
     public static JdbcExchangeRateCurrencyDao getInstance() {
         return JDBC_EXCHANGE_RATE_CURRENCY_DAO;
     }

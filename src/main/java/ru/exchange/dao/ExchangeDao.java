@@ -14,4 +14,6 @@ public interface ExchangeDao {
     ExchangeRateTo getCurrencyByCode(String code) throws SQLException;
     List<ExchangeRate> getAll();
 
+   boolean isExist(String baseCurrency, String  targetCurrency);
+
 }
