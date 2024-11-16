@@ -19,7 +19,9 @@ import ru.exchange.to.ExchangeRateTo;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
@@ -55,14 +57,13 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
         try {
             //check if the currency pair exist in DB
             if (exchangeDao.isExist(from, to)) {
-                viewInResponse(resp, from, to, Integer.parseInt(amountStr));
+                viewInResponse(resp, from, to, Integer.parseInt(amountStr), false, false);
                 return;
             } else if (exchangeDao.isExist(to, from)) {
-                viewInResponse(resp, to, from, Integer.parseInt(amountStr));
+                viewInResponse(resp, to, from, Integer.parseInt(amountStr), true, false);
 
             } else if (exchangeDao.isExist("USD", from) && exchangeDao.isExist("USD", to))
-                exchangeDao.getCurrencyByCode("USD" + from);
-                exchangeDao.getCurrencyByCode("USD" + to);
+               viewInResponse(resp, from, to, Integer.parseInt(amountStr), false, true);
         } catch (SQLException e) {
             if (e.getMessage().contains("Currency not found")) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -74,21 +75,39 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
 
     }
 
-    public void viewInResponse(HttpServletResponse resp, String baseCurrency, String targetCurrency, int amount) throws SQLException, IOException {
+    public void viewInResponse(HttpServletResponse resp, String baseCurrency, String targetCurrency, int amount, boolean isRevertedDirection, boolean isUsdDirection) throws SQLException, IOException {
         Currensy currencyFrom = currencyDao.getCurrencyByCode(baseCurrency);
         Currensy currencyTo = currencyDao.getCurrencyByCode(targetCurrency);
-        ExchangeRateTo currencyPairRate = exchangeDao.getCurrencyByCode(baseCurrency + targetCurrency);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setAnnotationIntrospector(new JacksonAnnotationIntrospector());
+        ExchangeRateTo currencyPairRate;
+        if (isUsdDirection) {
+            ExchangeRateTo exchangeRateUsdCurrencyFrom = exchangeDao.getCurrencyByCode("USD" + currencyFrom.getCode());
+            ExchangeRateTo exchangeRateUsdCurrencyTo = exchangeDao.getCurrencyByCode("USD" + currencyTo.getCode());
+            Double rateUsdCurrencyFrom = exchangeRateUsdCurrencyFrom.getRate();
+            Double rateUsdCurrencyTo = exchangeRateUsdCurrencyTo.getRate();
+            Double rateCurrencyFromCurrencyTo = rateUsdCurrencyFrom / rateUsdCurrencyTo;
+            List<Currensy> list = new ArrayList<>();
+            list.add(currencyFrom);
+            list.add(currencyTo);
+            currencyPairRate = new ExchangeRateTo(currencyFrom.getId(), currencyTo.getId(), list, rateCurrencyFromCurrencyTo);
+        } else {
 
-        JsonNode jsonNode = mapper.valueToTree(currencyPairRate);
-        ObjectNode combinedNode = mapper.createObjectNode();
-        combinedNode.set("currencyPairRate", jsonNode);
-        combinedNode.put("amount", amount);
-        combinedNode.put("convertedAmount", amount * currencyPairRate.getRate());
+            currencyPairRate = exchangeDao.getCurrencyByCode(baseCurrency + targetCurrency);
+            if (isRevertedDirection) {
+                currencyPairRate.setRate(1 / currencyPairRate.getRate());
+            }
+        }
 
-        String exchangeRateToJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(combinedNode);
-        resp.getWriter().println(exchangeRateToJson);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.setAnnotationIntrospector(new JacksonAnnotationIntrospector());
+
+            JsonNode jsonNode = mapper.valueToTree(currencyPairRate);
+            ObjectNode combinedNode = mapper.createObjectNode();
+            combinedNode.set("currencyPairRate", jsonNode);
+            combinedNode.put("amount", amount);
+            combinedNode.put("convertedAmount", amount * currencyPairRate.getRate());
+
+            String exchangeRateToJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(combinedNode);
+            resp.getWriter().println(exchangeRateToJson);
+        }
     }
 
-}
