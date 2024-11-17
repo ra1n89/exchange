@@ -17,11 +17,11 @@ import java.sql.SQLException;
 @WebServlet("/hello")
 public class Servlet extends HttpServlet {
 
-    CurrencyService currencyService =  CurrencyService.getCurrencyService();
+    CurrencyService currencyService =  CurrencyService.getInstance();
     ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");

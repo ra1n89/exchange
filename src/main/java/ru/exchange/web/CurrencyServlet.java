@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import ru.exchange.model.Currensy;
 import ru.exchange.service.CurrencyService;
+import ru.exchange.service.ExchangeRateService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,8 +16,7 @@ import java.util.List;
 @WebServlet("/currencies/*")
 public class CurrencyServlet extends HttpServlet {
 
-    CurrencyService currencyService = CurrencyService.getCurrencyService();
-
+    CurrencyService currencyService = CurrencyService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {

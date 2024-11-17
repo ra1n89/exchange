@@ -34,12 +34,15 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
     public ExchangeRate save(ExchangeRate exchangeRate) throws SQLException {
         String sql = "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES (?, ?, ?)";
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, exchangeRate.getBaseCurrencyId());
             statement.setInt(2, exchangeRate.getTargetCurrencyId());
             statement.setDouble(3, exchangeRate.getRate());
             statement.executeUpdate();
-
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            generatedKeys.next();
+            exchangeRate.setId(generatedKeys.getInt(1));
+            System.out.println(exchangeRate.getId());
         } catch (SQLException e) {
             throw e;
         }

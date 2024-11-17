@@ -12,6 +12,8 @@ import ru.exchange.dao.ExchangeDao;
 import ru.exchange.dao.JdbcCurrencyDao;
 import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
 import ru.exchange.model.ExchangeRate;
+import ru.exchange.service.CurrencyService;
+import ru.exchange.service.ExchangeRateService;
 import ru.exchange.to.ExchangeRateTo;
 
 import java.io.BufferedReader;
@@ -26,8 +28,8 @@ import java.util.stream.Collectors;
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
 
-    ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
-    CurrencyDao currencyDao = JdbcCurrencyDao.getInstance();
+    ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
+    CurrencyService currencyService = CurrencyService.getInstance();
 
 
 
@@ -40,14 +42,14 @@ public class ExchangeRateServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
         if ((pathInfo == null) || (pathInfo.equals("/")) || (pathInfo.length() != 7)) {
 
-            List<ExchangeRate> exchangeRate = exchangeDao.getAll();
+            List<ExchangeRate> exchangeRate = exchangeRateService.getAll();
             String exchangeRateJson = new ObjectMapper().writeValueAsString(exchangeRate);
             resp.getWriter().println(exchangeRateJson);
         } else {
             String code = pathInfo.substring(1);
             ExchangeRateTo exchangeRateTo = null;
             try {
-                exchangeRateTo = exchangeDao.getCurrencyByCode(code);
+                exchangeRateTo = exchangeRateService.getCurrencyByCode(code);
             } catch (SQLException e) {
                 System.out.println(e.getErrorCode() + e.getMessage());
                 if (e.getMessage().contains("Currency not found")) {
@@ -79,9 +81,9 @@ public class ExchangeRateServlet extends HttpServlet {
         System.out.println("asd");
 
         try {
-            int baseId = currencyDao.getCurrencyByCode(baseCurrencyCode).getId();
-            int targetId = currencyDao.getCurrencyByCode(targetCurrencyCode).getId();
-            exchangeDao.save(new ExchangeRate(baseId, targetId, rate));
+            int baseId = currencyService.getCurrencyByCode(baseCurrencyCode).getId();
+            int targetId = currencyService.getCurrencyByCode(targetCurrencyCode).getId();
+            exchangeRateService.save(new ExchangeRate(baseId, targetId, rate));
             resp.setStatus(HttpServletResponse.SC_CREATED);
             //resp.setHeader("Location", req.getContextPath() +"/exchangeRate/" + baseCurrencyCode + targetCurrencyCode);
             resp.sendRedirect("/exchangeRate/" + baseCurrencyCode + targetCurrencyCode);
@@ -135,9 +137,9 @@ public class ExchangeRateServlet extends HttpServlet {
         }
 
         try {
-            int baseCurrencyId = currencyDao.getCurrencyByCode(baseCurrency).getId();
-            int targetCurrencyId = currencyDao.getCurrencyByCode(targetCurrency).getId();
-            exchangeDao.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, Double.parseDouble(rateString)));
+            int baseCurrencyId = currencyService.getCurrencyByCode(baseCurrency).getId();
+            int targetCurrencyId = currencyService.getCurrencyByCode(targetCurrency).getId();
+            exchangeRateService.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, Double.parseDouble(rateString)));
         } catch (SQLException e) {
             System.out.println(e.getErrorCode() + e.getMessage());
             if (e.getMessage().contains("Currency not found")) {
@@ -147,36 +149,6 @@ public class ExchangeRateServlet extends HttpServlet {
             }
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
-        //        String baseCurrencyCode = req.getParameter("baseCurrencyCode");
-//        String targetCurrencyCode = req.getParameter("targetCurrencyCode");
-//        String rateString = req.getParameter("rate");
-//        if (Objects.equals(baseCurrencyCode, "") || Objects.equals(targetCurrencyCode, "") || Objects.equals(rateString, "")) {
-//            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            resp.getWriter().println("{\"error\": \"Missing required fields\"}");
-//            return;
-//        }
-//        Double rate = Double.parseDouble(rateString);
-//        System.out.println("asd");
-//        CurrencyDao currencyDao = new JdbcCurrencyCurrencyDao();
-//        try {
-//            int baseId = currencyDao.getCurrencyByCode(baseCurrencyCode).getId();
-//            int targetId = currencyDao.getCurrencyByCode(targetCurrencyCode).getId();
-//            exchangeDao.save(new ExchangeRate(baseId, targetId, rate));
-//            resp.setStatus(HttpServletResponse.SC_CREATED);
-//            //resp.setHeader("Location", req.getContextPath() +"/exchangeRate/" + baseCurrencyCode + targetCurrencyCode);
-//            resp.sendRedirect("/exchangeRate/" + baseCurrencyCode + targetCurrencyCode);
-//            //resp.setHeader("method", "GET");
-//            //req.getRequestDispatcher("/exchangeRate/" + baseCurrencyCode + targetCurrencyCode).forward(req, resp);
-//        } catch (SQLException e) {
-//            System.out.println(e.getErrorCode() + e.getMessage());
-//            if (e.getMessage().contains("Currency not found")) {
-//                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//                resp.getWriter().println("{\"error\": \"Currency not found\"}");
-//                return;
-//            }
-//            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//        }
     }
 
     private boolean isNumeric(String rate) {

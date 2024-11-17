@@ -6,11 +6,14 @@
     <title>Form Submit Example</title>
 </head>
 <body>
-<form id="myForm" action="/hello" method="POST">
-    <!-- Добавьте необходимые поля формы -->
-    <input type="text" name="username" placeholder="Enter your name">
-    <button type="button" onClick="submitForm()">Submit</button>
-</form>
+<%--<form id="myForm" action="/hello" method="POST">--%>
+<%--    <!-- Добавьте необходимые поля формы -->--%>
+<%--    <input type="text" name="username" placeholder="Enter your name">--%>
+<%--    <button type="button" onClick="submitForm()">Submit</button>--%>
+<%--</form>--%>
+<%
+    response.sendRedirect("/hello");
+%>
 
 <script>
     function submitForm() {

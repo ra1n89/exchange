@@ -37,7 +37,7 @@ public class CurrencyService {
         return currencyDao.getCurrencyByCode(code);
     }
 
-    public static CurrencyService getCurrencyService(){
+    public static CurrencyService getInstance(){
         return CURRENCY_SERVICE;
     }
 

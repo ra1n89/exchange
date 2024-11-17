@@ -15,6 +15,8 @@ import ru.exchange.dao.ExchangeDao;
 import ru.exchange.dao.JdbcCurrencyDao;
 import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
 import ru.exchange.model.Currensy;
+import ru.exchange.service.CurrencyService;
+import ru.exchange.service.ExchangeRateService;
 import ru.exchange.to.ExchangeRateTo;
 
 import java.io.IOException;
@@ -38,8 +40,8 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
 В таблице ExchangeRates существует валютная пара BA - берем её курс, и считаем обратный, чтобы получить AB
 В таблице ExchangeRates существуют валютные пары USD-A и USD-B - вычисляем из этих курсов курс AB
 */
-    ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
-    CurrencyDao currencyDao = JdbcCurrencyDao.getInstance();
+    ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
+    CurrencyService currencyService = CurrencyService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -56,13 +58,13 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
 
         try {
             //check if the currency pair exist in DB
-            if (exchangeDao.isExist(from, to)) {
+            if (exchangeRateService.isExist(from, to)) {
                 viewInResponse(resp, from, to, Integer.parseInt(amountStr), false, false);
                 return;
-            } else if (exchangeDao.isExist(to, from)) {
+            } else if (exchangeRateService.isExist(to, from)) {
                 viewInResponse(resp, to, from, Integer.parseInt(amountStr), true, false);
 
-            } else if (exchangeDao.isExist("USD", from) && exchangeDao.isExist("USD", to))
+            } else if (exchangeRateService.isExist("USD", from) && exchangeRateService.isExist("USD", to))
                viewInResponse(resp, from, to, Integer.parseInt(amountStr), false, true);
         } catch (SQLException e) {
             if (e.getMessage().contains("Currency not found")) {
@@ -76,12 +78,12 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
     }
 
     public void viewInResponse(HttpServletResponse resp, String baseCurrency, String targetCurrency, int amount, boolean isRevertedDirection, boolean isUsdDirection) throws SQLException, IOException {
-        Currensy currencyFrom = currencyDao.getCurrencyByCode(baseCurrency);
-        Currensy currencyTo = currencyDao.getCurrencyByCode(targetCurrency);
+        Currensy currencyFrom = currencyService.getCurrencyByCode(baseCurrency);
+        Currensy currencyTo = currencyService.getCurrencyByCode(targetCurrency);
         ExchangeRateTo currencyPairRate;
         if (isUsdDirection) {
-            ExchangeRateTo exchangeRateUsdCurrencyFrom = exchangeDao.getCurrencyByCode("USD" + currencyFrom.getCode());
-            ExchangeRateTo exchangeRateUsdCurrencyTo = exchangeDao.getCurrencyByCode("USD" + currencyTo.getCode());
+            ExchangeRateTo exchangeRateUsdCurrencyFrom = exchangeRateService.getCurrencyByCode("USD" + currencyFrom.getCode());
+            ExchangeRateTo exchangeRateUsdCurrencyTo = exchangeRateService.getCurrencyByCode("USD" + currencyTo.getCode());
             Double rateUsdCurrencyFrom = exchangeRateUsdCurrencyFrom.getRate();
             Double rateUsdCurrencyTo = exchangeRateUsdCurrencyTo.getRate();
             Double rateCurrencyFromCurrencyTo = rateUsdCurrencyFrom / rateUsdCurrencyTo;
@@ -91,7 +93,7 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
             currencyPairRate = new ExchangeRateTo(currencyFrom.getId(), currencyTo.getId(), list, rateCurrencyFromCurrencyTo);
         } else {
 
-            currencyPairRate = exchangeDao.getCurrencyByCode(baseCurrency + targetCurrency);
+            currencyPairRate = exchangeRateService.getCurrencyByCode(baseCurrency + targetCurrency);
             if (isRevertedDirection) {
                 currencyPairRate.setRate(1 / currencyPairRate.getRate());
             }
