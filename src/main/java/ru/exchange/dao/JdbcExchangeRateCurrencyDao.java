@@ -27,15 +27,16 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
             statement.setInt(2, exchangeRate.getTargetCurrencyId());
             statement.setDouble(3, exchangeRate.getRate());
             statement.executeUpdate();
+
             ResultSet generatedKeys = statement.getGeneratedKeys();
+
             generatedKeys.next();
+
             exchangeRate.setId(generatedKeys.getInt(1));
-            System.out.println(exchangeRate.getId());
+
         } catch (SQLException e) {
             throw e;
         }
-
-        // надо бы разобраться как вернуть ID и засетить в сущность
         return exchangeRate;
     }
 
@@ -66,7 +67,6 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         CurrencyDao currensyDao = JdbcCurrencyDao.getInstance();
         Currensy baseCurrencyId = currensyDao.getCurrencyByCode(baseCurrency);
         Currensy targetCurrencyId = currensyDao.getCurrencyByCode(targetCurrency);
-        //System.out.println(baseCurrency + "id=" + baseCurrencyId + " " + targetCurrency + " id=" + targetCurrencyId ) ;
 
         String sql = """
                 select * from exchange_rates
@@ -76,21 +76,25 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
                 """;
 
         ExchangeRateTo exchangeRateTo;
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, baseCurrency);
             statement.setString(2, targetCurrency);
+
             ResultSet resultSet = statement.executeQuery();
+
             if (resultSet.next()) {
                 int idFromTable = resultSet.getInt(1);
                 int baseCurrencyIdFromTable = resultSet.getInt(2);
                 int targetCurrencyIdFromTable = resultSet.getInt(3);
                 double rateFromTable = resultSet.getDouble(4);
+
                 exchangeRateTo = new ExchangeRateTo(baseCurrencyIdFromTable, targetCurrencyIdFromTable, List.of(baseCurrencyId, targetCurrencyId), rateFromTable);
                 exchangeRateTo.setId(idFromTable);
+
             } else {
                 throw new SQLException("Currency not found");
             }
-
 
         } catch (SQLException e) {
             throw e;
@@ -100,12 +104,15 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
 
     @Override
     public List<ExchangeRate> getAll() {
+
         List<ExchangeRate> rateList = new ArrayList<>();
+
         String sql = "SELECT * FROM exchange_rates";
+
         int id;
         int baseCurrencyId;
         int targetCurrencyId;
-        Double rate;
+        double rate;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -114,14 +121,16 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
                 baseCurrencyId = resultSet.getInt("base_currency_id");
                 targetCurrencyId = resultSet.getInt("target_currency_id");
                 rate = resultSet.getDouble("rate");
+
                 ExchangeRate exchangeRate = new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
+
                 exchangeRate.setId(id);
+
                 rateList.add(exchangeRate);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return rateList;
     }
 
@@ -133,22 +142,21 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             int baseCurrencyId = currensyDao.getCurrencyByCode(baseCurrency).getId();
             int targetCurrencyId = currensyDao.getCurrencyByCode(targetCurrency).getId();
+
             statement.setInt(1, baseCurrencyId);
             statement.setInt(2, targetCurrencyId);
+
             ResultSet resultSet = statement.executeQuery();
-            System.out.println(resultSet);
+
             return resultSet.getBoolean(1);
         } catch (Exception e) {
-
             return false;
         }
-
     }
 
     public static JdbcExchangeRateCurrencyDao getInstance() {
         return JDBC_EXCHANGE_RATE_CURRENCY_DAO;
     }
-
 }
 
 

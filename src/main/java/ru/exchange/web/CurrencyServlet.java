@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-
 @WebServlet("/currencies/*")
 public class CurrencyServlet extends HttpServlet {
 
@@ -23,7 +22,6 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
         String pathInfo = req.getPathInfo();
-
 
         if ((pathInfo == null) || (pathInfo.equals("/"))) {
 
@@ -57,7 +55,6 @@ public class CurrencyServlet extends HttpServlet {
             String currensJson = new ObjectMapper().writeValueAsString(currens);
             resp.getWriter().println(currensJson);
         }
-        // resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
     }
 
     @Override
@@ -74,7 +71,6 @@ public class CurrencyServlet extends HttpServlet {
             resp.getWriter().println(e.getMessage());
             return;
         }
-
 
         Currensy currensy = new Currensy(code, sign, fullName);
         try {

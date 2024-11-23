@@ -22,18 +22,6 @@ import java.util.List;
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
 
-    /*Обмен валюты #
-GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
-Расчёт перевода определённого количества средств из одной валюты в другую. Пример запроса - GET /exchange?from=USD&to=AUD&amount=10.
-
-Пример ответа:
-
-Получение курса для обмена может пройти по одному из трёх сценариев. Допустим, совершаем перевод из валюты A в валюту B:
-
-В таблице ExchangeRates существует валютная пара AB - берём её курс
-В таблице ExchangeRates существует валютная пара BA - берем её курс, и считаем обратный, чтобы получить AB
-В таблице ExchangeRates существуют валютные пары USD-A и USD-B - вычисляем из этих курсов курс AB
-*/
     ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     CurrencyService currencyService = CurrencyService.getInstance();
 

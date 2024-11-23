@@ -11,6 +11,7 @@ import java.util.List;
 public class ExchangeRateService {
 
     static private final ExchangeRateService EXCHANGE_RATE_SERVICE = new ExchangeRateService();
+
     ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
 
     private ExchangeRateService() {

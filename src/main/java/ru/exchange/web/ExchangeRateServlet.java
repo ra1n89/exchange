@@ -20,44 +20,56 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
-
     ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     CurrencyService currencyService = CurrencyService.getInstance();
-
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");
-        String pathInfo = req.getPathInfo();
-        if ((pathInfo == null) || (pathInfo.equals("/")) || (pathInfo.length() != 7)) {
 
+        String pathInfo = req.getPathInfo();
+
+        if ((pathInfo == null) || (pathInfo.equals("/")) || (pathInfo.length() != 7)) {
             List<ExchangeRate> exchangeRate = exchangeRateService.getAll();
+
             String exchangeRateJson = new ObjectMapper().writeValueAsString(exchangeRate);
+
             resp.getWriter().println(exchangeRateJson);
+
         } else {
+
             String code = pathInfo.substring(1);
+
             ExchangeRateTo exchangeRateTo = null;
+
             try {
+
                 exchangeRateTo = exchangeRateService.getCurrencyByCode(code);
+
             } catch (SQLException e) {
+
                 System.out.println(e.getErrorCode() + e.getMessage());
+
                 if (e.getMessage().contains("Currency not found")) {
                     resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     resp.getWriter().println("{\"error\": \"Currency not found\"}");
                     return;
                 }
+
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+
             ObjectMapper mapper = new ObjectMapper();
+
             mapper.setAnnotationIntrospector(new JacksonAnnotationIntrospector());
+
             String exchangeRateToJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRateTo);
+
             resp.getWriter().println(exchangeRateToJson);
         }
-        //resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
     }
 
     @Override
@@ -65,30 +77,32 @@ public class ExchangeRateServlet extends HttpServlet {
         String baseCurrencyCode = req.getParameter("baseCurrencyCode");
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rateString = req.getParameter("rate");
+
         if (baseCurrencyCode.isEmpty() || targetCurrencyCode.isEmpty() || rateString.isEmpty()) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().println("{\"error\": \"Missing required fields\"}");
             return;
         }
+
         Double rate = Double.parseDouble(rateString);
-        System.out.println("asd");
 
         try {
             int baseId = currencyService.getCurrencyByCode(baseCurrencyCode).getId();
             int targetId = currencyService.getCurrencyByCode(targetCurrencyCode).getId();
+
             exchangeRateService.save(new ExchangeRate(baseId, targetId, rate));
+
             resp.setStatus(HttpServletResponse.SC_CREATED);
-            //resp.setHeader("Location", req.getContextPath() +"/exchangeRate/" + baseCurrencyCode + targetCurrencyCode);
             resp.sendRedirect("/exchangeRate/" + baseCurrencyCode + targetCurrencyCode);
-            //resp.setHeader("method", "GET");
-            //req.getRequestDispatcher("/exchangeRate/" + baseCurrencyCode + targetCurrencyCode).forward(req, resp);
+
         } catch (SQLException e) {
-            System.out.println(e.getErrorCode() + e.getMessage());
+
             if (e.getMessage().contains("Currency not found")) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 resp.getWriter().println("{\"error\": \"Currency not found\"}");
                 return;
             }
+
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -108,7 +122,9 @@ public class ExchangeRateServlet extends HttpServlet {
         String body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
 
         Map<String, String> parameters = new HashMap<String, String>();
+
         String[] pairs = body.split("&");
+
         for (String pair : pairs) {
             String[] pairArray = pair.split("=");
             if (pairArray.length < 2) {
@@ -149,7 +165,6 @@ public class ExchangeRateServlet extends HttpServlet {
             Double.parseDouble(rate);
         } catch (NumberFormatException e) {
             return false;
-
         }
         return true;
     }

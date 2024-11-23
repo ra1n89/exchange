@@ -13,7 +13,6 @@ public class JdbcCurrencyDao implements CurrencyDao {
 
     static private JdbcCurrencyDao JDBC_CURRENCY_DAO = new JdbcCurrencyDao();
 
-
     private JdbcCurrencyDao() {
         connection = ConnectionManager.getConnection();
     }
@@ -30,8 +29,6 @@ public class JdbcCurrencyDao implements CurrencyDao {
         } catch (SQLException e) {
             throw e;
         }
-
-
         return currensy;
     }
 
@@ -52,21 +49,25 @@ public class JdbcCurrencyDao implements CurrencyDao {
     public Currensy getCurrencyByCode(String code) throws SQLException {
         String sql = "SELECT * FROM currencies WHERE code =?";
         Currensy currensy;
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setString(1, code);
             ResultSet resultSet = statement.executeQuery();
+
             if (resultSet.next()) {
+
                 String idFromTable = resultSet.getString(1);
                 String codeFromTable = resultSet.getString(2);
                 String sign = resultSet.getString(3);
                 String fullName = resultSet.getString(4);
+
                 currensy = new Currensy(codeFromTable, sign, fullName);
                 currensy.setId(Integer.parseInt(idFromTable));
+
             } else {
                 throw new SQLException("Currency not found");
             }
-
-
         } catch (SQLException e) {
             throw e;
         }
@@ -78,6 +79,7 @@ public class JdbcCurrencyDao implements CurrencyDao {
 
         List<Currensy> currensyList = new ArrayList<Currensy>();
         String sql = "SELECT * FROM currencies";
+
         int id;
         String code;
         String sign;
@@ -86,10 +88,12 @@ public class JdbcCurrencyDao implements CurrencyDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
+
                 id = resultSet.getInt("id");
                 code = resultSet.getString("code");
                 sign = resultSet.getString("sign");
                 fullName = resultSet.getString("full_name");
+
                 Currensy currensy = new Currensy(code, sign, fullName);
                 currensy.setId(id);
                 currensyList.add(currensy);
@@ -97,7 +101,6 @@ public class JdbcCurrencyDao implements CurrencyDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return currensyList;
     }
 
@@ -110,7 +113,6 @@ public class JdbcCurrencyDao implements CurrencyDao {
                 "sign VARCHAR NOT NULL ," +
                 "full_name VARCHAR NOT NULL)";
 
-
         String sqlDropExcangeRatesTable = "DROP TABLE IF EXISTS exchange_rates";
         String sqlCreateExcangeRatesTable = "CREATE TABLE exchange_rates (id INTEGER PRIMARY KEY, " +
                 "base_currency_id INTEGER, " +
@@ -119,7 +121,6 @@ public class JdbcCurrencyDao implements CurrencyDao {
                 "FOREIGN KEY (base_currency_id) REFERENCES currencies (id) ON DELETE CASCADE, " +
                 "FOREIGN KEY (target_currency_id) REFERENCES currencies (id) ON DELETE CASCADE, " +
                 "UNIQUE (base_currency_id, target_currency_id))";
-
 
         try (Statement statement = connection.createStatement()) {
             statement.execute(sqlDropExcangeRatesTable);

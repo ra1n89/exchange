@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ConnectionManager {
-    //private static final ConnectionManager CONNECTION_MANAGER = new ConnectionManager();
 
     private static HikariDataSource dataSource;
 
@@ -14,14 +13,11 @@ public class ConnectionManager {
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:sqlite:C:/apache-tomcat-11.0.0/apache-tomcat-11.0.0/bin/exchange.db");
         dataSource.setDriverClassName("org.sqlite.JDBC");
-
     }
 
     private ConnectionManager() {
 
     }
-
-    ;
 
     public static Connection getConnection() {
         try {
