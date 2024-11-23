@@ -3,6 +3,7 @@ package ru.exchange.dao;
 import ru.exchange.model.Currensy;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.to.ExchangeRateTo;
+import ru.exchange.utils.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,20 +15,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
     private static final JdbcExchangeRateCurrencyDao JDBC_EXCHANGE_RATE_CURRENCY_DAO = new JdbcExchangeRateCurrencyDao();
 
     private JdbcExchangeRateCurrencyDao() {
-        // Initialize the database connection
-        // Replace "sample.db" with your actual SQLite database file path
-        try {
-            Class.forName("org.sqlite.JDBC");  // Load SQLite JDBC driver
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/exchange.db";
-        try {
-            connection = DriverManager.getConnection(url);
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        connection = ConnectionManager.getConnection();
     }
 
     @Override
