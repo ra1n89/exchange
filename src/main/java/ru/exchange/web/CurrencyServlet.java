@@ -60,8 +60,10 @@ public class CurrencyServlet extends HttpServlet {
         }
         Currensy currensy = new Currensy(code, sign, fullName);
         try {
-            currencyService.save(currensy);
+            String json = new ObjectMapper().writeValueAsString(currencyService.save(currensy));
+            resp.getWriter().println(json);
             resp.setStatus(HttpServletResponse.SC_CREATED);
+
         } catch (SQLException e) {
             if (e.getErrorCode() == 19) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
