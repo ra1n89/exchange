@@ -10,6 +10,7 @@ import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
 import ru.exchange.model.Currensy;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.service.CurrencyService;
+import ru.exchange.utils.ConnectionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -25,6 +26,8 @@ public class Servlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");
+
+
 
         System.out.println("hello");
         currencyService.createTable();
