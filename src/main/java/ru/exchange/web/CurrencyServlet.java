@@ -55,7 +55,7 @@ public class CurrencyServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             String currensJson = new ObjectMapper().writeValueAsString(currens);
-            resp.getWriter().println(currens);
+            resp.getWriter().println(currensJson);
         }
         // resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
     }
