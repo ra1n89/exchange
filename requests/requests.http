@@ -3,24 +3,36 @@ GET http://localhost:8080/currencies/
 Accept:  application/json;charset=UTF-8
 
 ### Get certain currency
-GET http://localhost:8080/currencies/USD
+GET http://localhost:8080/currency/USD
 Accept:  application/json;charset=UTF-8
 
-### Check if currnecy is valid
-GET http://localhost:8080/currencies/US
+### Get invalid currency
+GET http://localhost:8080/currency/US
 Accept:  application/json;charset=UTF-8
 
 ### Add certain currency
-POST http://localhost:8080/currencies
+POST http://localhost:8080/currencies/
 Content-Type: application/x-www-form-urlencoded
 
 code=EUR &
 sign=€ &
 fullName=European Currency
 
-### Get certain currency RESPONCE COD 200!!!!!!!!!!!!
-POST http://localhost:8080/currencies/UAN
-Accept:  application/json;charset=UTF-8
+### Add invalid code in currency
+POST http://localhost:8080/currencies/
+Content-Type: application/x-www-form-urlencoded
+
+code=EU &
+sign=€ &
+fullName=European Currency
+
+### Add invalid sign in currency
+POST http://localhost:8080/currencies/
+Content-Type: application/x-www-form-urlencoded
+
+code=EUR &
+sign=€f &
+fullName=European Currency
 
 
 ### Get all exchange rates
