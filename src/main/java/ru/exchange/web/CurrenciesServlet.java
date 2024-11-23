@@ -14,47 +14,19 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet("/currencies/*")
+@WebServlet("/currencies/")
 public class CurrenciesServlet extends HttpServlet {
 
     CurrencyService currencyService = CurrencyService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
-        String pathInfo = req.getPathInfo();
-
-        if ((pathInfo == null) || (pathInfo.equals("/"))) {
 
             List<Currensy> currensies = currencyService.getAll();
 
             String currensiesJson = new ObjectMapper().writeValueAsString(currensies);
 
             resp.getWriter().println(currensiesJson);
-
-        } else {
-            String code = pathInfo.substring(1);
-            try {
-                ValidationUtil.validate(code);
-            } catch (IllegalArgumentException e) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().println(e.getMessage());
-                return;
-            }
-            Currensy currens = null;
-            try {
-                currens = currencyService.getCurrencyByCode(code);
-            } catch (SQLException e) {
-                System.out.println(e.getErrorCode() + e.getMessage());
-                if (e.getMessage().contains("Currency not found")) {
-                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    resp.getWriter().println("{\"error\": \"Currency not found\"}");
-                    return;
-                }
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            String currensJson = new ObjectMapper().writeValueAsString(currens);
-            resp.getWriter().println(currensJson);
-        }
     }
 
     @Override

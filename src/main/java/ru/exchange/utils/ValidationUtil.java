@@ -8,7 +8,7 @@ public class ValidationUtil {
         }
     }
 
-    public static void validate(String code, String sign, String fullName) {
+    public static void validate(String code, String sign, String fullName) throws IllegalArgumentException {
         if (code == null || sign == null || fullName == null) {
             throw new IllegalArgumentException("Missing required fields");
         }
