@@ -7,6 +7,7 @@ import jakarta.servlet.http.*;
 import ru.exchange.model.Currensy;
 import ru.exchange.service.CurrencyService;
 import ru.exchange.service.ExchangeRateService;
+import ru.exchange.utils.ValidationUtil;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,14 +22,26 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
         String pathInfo = req.getPathInfo();
+
+
+
         if ((pathInfo == null) || (pathInfo.equals("/"))) {
 
             List<Currensy> currensies = currencyService.getAll();
+
             String currensiesJson = new ObjectMapper().writeValueAsString(currensies);
+
             resp.getWriter().println(currensiesJson);
+
         } else {
             String code = pathInfo.substring(1);
-            System.out.println(code);
+            try {
+                ValidationUtil.validate(code);
+            } catch (IllegalArgumentException e) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().println(e.getMessage());
+                return;
+            }
             Currensy currens = null;
             try {
                 currens = currencyService.getCurrencyByCode(code);
@@ -44,7 +57,7 @@ public class CurrencyServlet extends HttpServlet {
             String currensJson = new ObjectMapper().writeValueAsString(currens);
             resp.getWriter().println(currens);
         }
-       // resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
+        // resp.getWriter().println("Unsupported code: " + req.getParameter("code"));
     }
 
     @Override
@@ -53,6 +66,7 @@ public class CurrencyServlet extends HttpServlet {
         String code = req.getParameter("code");
         String sign = req.getParameter("sign");
         String fullName = req.getParameter("fullName");
+
         if (code == null || sign == null || fullName == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().println("{\"error\": \"Missing required fields\"}");
