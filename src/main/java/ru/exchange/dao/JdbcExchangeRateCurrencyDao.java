@@ -80,12 +80,17 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         Currensy targetCurrencyId = currensyDao.getCurrencyByCode(targetCurrency);
         //System.out.println(baseCurrency + "id=" + baseCurrencyId + " " + targetCurrency + " id=" + targetCurrencyId ) ;
 
-        String sql = "SELECT * FROM exchange_rates WHERE base_currency_id = ? AND target_currency_id = ?";
+        String sql = """
+                select * from exchange_rates
+                                  JOIN currencies c1 ON c1.id = exchange_rates.base_currency_id
+                                  JOIN currencies c2 ON c2.id = exchange_rates.target_currency_id
+                WHERE c1.code = ? AND c2.code = ?
+                """;
 
         ExchangeRateTo exchangeRateTo;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, baseCurrencyId.getId());
-            statement.setInt(2, targetCurrencyId.getId());
+            statement.setString(1, baseCurrency);
+            statement.setString(2, targetCurrency);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 int idFromTable = resultSet.getInt(1);
