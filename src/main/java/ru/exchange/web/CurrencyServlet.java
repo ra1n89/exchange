@@ -67,11 +67,15 @@ public class CurrencyServlet extends HttpServlet {
         String sign = req.getParameter("sign");
         String fullName = req.getParameter("fullName");
 
-        if (code == null || sign == null || fullName == null) {
+        try {
+            ValidationUtil.validate(code, sign, fullName);
+        } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().println("{\"error\": \"Missing required fields\"}");
+            resp.getWriter().println(e.getMessage());
             return;
         }
+
+
         Currensy currensy = new Currensy(code, sign, fullName);
         try {
             String json = new ObjectMapper().writeValueAsString(currencyService.save(currensy));
