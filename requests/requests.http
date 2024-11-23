@@ -6,6 +6,10 @@ Accept:  application/json;charset=UTF-8
 GET http://localhost:8080/currencies/USD
 Accept:  application/json;charset=UTF-8
 
+### Check if currnecy is valid
+GET http://localhost:8080/currencies/USD
+Accept:  application/json;charset=UTF-8
+
 ### Add certain currency
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
