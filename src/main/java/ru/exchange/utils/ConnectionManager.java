@@ -19,9 +19,11 @@ public class ConnectionManager {
 
     private ConnectionManager() {
 
-    };
+    }
 
-    public static Connection getConnection(){
+    ;
+
+    public static Connection getConnection() {
         try {
             return dataSource.getConnection();
         } catch (SQLException e) {

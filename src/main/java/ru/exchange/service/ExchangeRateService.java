@@ -13,7 +13,8 @@ public class ExchangeRateService {
     static private final ExchangeRateService EXCHANGE_RATE_SERVICE = new ExchangeRateService();
     ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
 
-    private ExchangeRateService() {}
+    private ExchangeRateService() {
+    }
 
     public ExchangeRate save(ExchangeRate exchangeRate) throws SQLException {
 
@@ -44,7 +45,7 @@ public class ExchangeRateService {
         return exchangeDao.isExist(baseCurrency, targetCurrency);
     }
 
-    public static ExchangeRateService getInstance(){
+    public static ExchangeRateService getInstance() {
         return EXCHANGE_RATE_SERVICE;
     }
 }

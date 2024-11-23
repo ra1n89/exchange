@@ -10,7 +10,6 @@ import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
 import ru.exchange.model.Currensy;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.service.CurrencyService;
-import ru.exchange.utils.ConnectionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,7 +17,7 @@ import java.sql.SQLException;
 @WebServlet("/hello")
 public class Servlet extends HttpServlet {
 
-    CurrencyService currencyService =  CurrencyService.getInstance();
+    CurrencyService currencyService = CurrencyService.getInstance();
     ExchangeDao exchangeDao = JdbcExchangeRateCurrencyDao.getInstance();
 
     @Override
@@ -28,16 +27,15 @@ public class Servlet extends HttpServlet {
         resp.setContentType("application/json");
 
 
-
         System.out.println("hello");
         currencyService.createTable();
         try {
             currencyService.save(new Currensy("AUD", "A$", "Australian dollar"));
             currencyService.save(new Currensy("USD", "$", "American dollar"));
             currencyService.save(new Currensy("RUB", "₽", "Ruble"));
-            exchangeDao.save(new ExchangeRate(1,2,0.010221D));
-            exchangeDao.save(new ExchangeRate(1,3,0.012221D));
-            exchangeDao.save(new ExchangeRate(2,3,0.98));
+            exchangeDao.save(new ExchangeRate(1, 2, 0.010221D));
+            exchangeDao.save(new ExchangeRate(1, 3, 0.012221D));
+            exchangeDao.save(new ExchangeRate(2, 3, 0.98));
 
 
         } catch (SQLException e) {

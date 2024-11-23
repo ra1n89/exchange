@@ -29,7 +29,7 @@ public class CurrencyService {
         return currencyDao.delete(id);
     }
 
-    public  void createTable() {
+    public void createTable() {
         currencyDao.createTable();
     }
 
@@ -37,7 +37,7 @@ public class CurrencyService {
         return currencyDao.getCurrencyByCode(code);
     }
 
-    public static CurrencyService getInstance(){
+    public static CurrencyService getInstance() {
         return CURRENCY_SERVICE;
     }
 

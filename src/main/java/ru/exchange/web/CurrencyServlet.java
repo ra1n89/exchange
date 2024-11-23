@@ -3,10 +3,11 @@ package ru.exchange.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import ru.exchange.model.Currensy;
 import ru.exchange.service.CurrencyService;
-import ru.exchange.service.ExchangeRateService;
 import ru.exchange.utils.ValidationUtil;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
         String pathInfo = req.getPathInfo();
-
 
 
         if ((pathInfo == null) || (pathInfo.equals("/"))) {

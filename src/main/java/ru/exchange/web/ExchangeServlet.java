@@ -1,6 +1,5 @@
 package ru.exchange.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
@@ -10,10 +9,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.exchange.dao.CurrencyDao;
-import ru.exchange.dao.ExchangeDao;
-import ru.exchange.dao.JdbcCurrencyDao;
-import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
 import ru.exchange.model.Currensy;
 import ru.exchange.service.CurrencyService;
 import ru.exchange.service.ExchangeRateService;
@@ -22,7 +17,6 @@ import ru.exchange.to.ExchangeRateTo;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 @WebServlet("/exchange")
@@ -65,7 +59,7 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
                 viewInResponse(resp, to, from, Integer.parseInt(amountStr), true, false);
 
             } else if (exchangeRateService.isExist("USD", from) && exchangeRateService.isExist("USD", to))
-               viewInResponse(resp, from, to, Integer.parseInt(amountStr), false, true);
+                viewInResponse(resp, from, to, Integer.parseInt(amountStr), false, true);
         } catch (SQLException e) {
             if (e.getMessage().contains("Currency not found")) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -99,17 +93,17 @@ GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT #
             }
         }
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setAnnotationIntrospector(new JacksonAnnotationIntrospector());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setAnnotationIntrospector(new JacksonAnnotationIntrospector());
 
-            JsonNode jsonNode = mapper.valueToTree(currencyPairRate);
-            ObjectNode combinedNode = mapper.createObjectNode();
-            combinedNode.set("currencyPairRate", jsonNode);
-            combinedNode.put("amount", amount);
-            combinedNode.put("convertedAmount", amount * currencyPairRate.getRate());
+        JsonNode jsonNode = mapper.valueToTree(currencyPairRate);
+        ObjectNode combinedNode = mapper.createObjectNode();
+        combinedNode.set("currencyPairRate", jsonNode);
+        combinedNode.put("amount", amount);
+        combinedNode.put("convertedAmount", amount * currencyPairRate.getRate());
 
-            String exchangeRateToJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(combinedNode);
-            resp.getWriter().println(exchangeRateToJson);
-        }
+        String exchangeRateToJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(combinedNode);
+        resp.getWriter().println(exchangeRateToJson);
     }
+}
 

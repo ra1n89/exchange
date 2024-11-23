@@ -1,7 +1,6 @@
 package ru.exchange.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 import ru.exchange.model.Currensy;
 
 import java.util.List;

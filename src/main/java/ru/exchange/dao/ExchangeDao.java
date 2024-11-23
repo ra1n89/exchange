@@ -10,10 +10,13 @@ public interface ExchangeDao {
     ExchangeRate save(ExchangeRate exchangeRate) throws SQLException;
 
     boolean update(ExchangeRate exchangeRate);
+
     boolean delete(int id);
+
     ExchangeRateTo getCurrencyByCode(String code) throws SQLException;
+
     List<ExchangeRate> getAll();
 
-   boolean isExist(String baseCurrency, String  targetCurrency);
+    boolean isExist(String baseCurrency, String targetCurrency);
 
 }

@@ -125,7 +125,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         return rateList;
     }
 
-    public boolean isExist(String baseCurrency, String  targetCurrency){
+    public boolean isExist(String baseCurrency, String targetCurrency) {
         CurrencyDao currensyDao = JdbcCurrencyDao.getInstance();
 
         String sql = "SELECT EXISTS (SELECT 1 FROM exchange_rates WHERE base_currency_id = ? AND target_currency_id = ?)";

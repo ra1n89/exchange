@@ -131,7 +131,8 @@ public class JdbcCurrencyDao implements CurrencyDao {
             throw new RuntimeException(e);
         }
     }
-    static public JdbcCurrencyDao getInstance(){
+
+    static public JdbcCurrencyDao getInstance() {
         return JDBC_CURRENCY_DAO;
     }
 

@@ -3,7 +3,6 @@ package ru.exchange.web;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
-import ru.exchange.dao.JdbcCurrencyDao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

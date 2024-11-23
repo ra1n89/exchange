@@ -7,10 +7,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.exchange.dao.CurrencyDao;
-import ru.exchange.dao.ExchangeDao;
-import ru.exchange.dao.JdbcCurrencyDao;
-import ru.exchange.dao.JdbcExchangeRateCurrencyDao;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.service.CurrencyService;
 import ru.exchange.service.ExchangeRateService;
@@ -30,9 +26,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
     ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     CurrencyService currencyService = CurrencyService.getInstance();
-
-
-
 
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
@@ -118,7 +111,7 @@ public class ExchangeRateServlet extends HttpServlet {
         String[] pairs = body.split("&");
         for (String pair : pairs) {
             String[] pairArray = pair.split("=");
-            if (pairArray.length<2) {
+            if (pairArray.length < 2) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }

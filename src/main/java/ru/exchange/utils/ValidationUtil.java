@@ -1,10 +1,8 @@
 package ru.exchange.utils;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 public class ValidationUtil {
 
-    static public void validate(String code) throws IllegalArgumentException{
+    static public void validate(String code) throws IllegalArgumentException {
         if (code.length() != 3) {
             throw new IllegalArgumentException("Invalid code: " + code);
         }
@@ -15,7 +13,7 @@ public class ValidationUtil {
             throw new IllegalArgumentException("Missing required fields");
         }
 
-        if (code.length() != 3  || sign.length() != 1) {
+        if (code.length() != 3 || sign.length() != 1) {
             throw new IllegalArgumentException("Invalid code: " + code + " or sign:" + sign);
         }
     }
