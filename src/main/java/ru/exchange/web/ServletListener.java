@@ -3,6 +3,7 @@ package ru.exchange.web;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import ru.exchange.utils.ConnectionManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,17 +15,7 @@ public class ServletListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
         // Initialize the database connection
-        // Replace "sample.db" with your actual SQLite database file path
-        Connection connection;
-
-        String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/exchange.db";
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(url);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        Connection connection = ConnectionManager.getConnection();
 
         String sqlDropСurrencyTable = "DROP TABLE IF EXISTS currencies";
 
