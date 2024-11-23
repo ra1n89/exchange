@@ -1,0 +1,31 @@
+### Get all currencies
+GET http://localhost:8080/currencies/
+Accept:  application/json;charset=UTF-8
+
+### Get certain currency
+GET http://localhost:8080/currencies/USD
+Accept:  application/json;charset=UTF-8
+
+### Add certain currency
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+code=EUR &
+sign=€ &
+fullName=European Currency
+
+### Get certain currency RESPONCE COD 200!!!!!!!!!!!!
+POST http://localhost:8080/currencies/UAN
+Accept:  application/json;charset=UTF-8
+
+
+### Get all exchange rates
+GET http://localhost:8080/exchangeRate/
+Accept:  application/json;charset=UTF-8
+
+### Get exchange rate between two currencies
+GET http://localhost:8080/exchangeRate/USDRUB
+Accept:  application/json;charset=UTF-8
+
+### Get exchange amount between two currencies
+GET http://localhost:8080/exchange?from=AUD&to=USD&amount=10
