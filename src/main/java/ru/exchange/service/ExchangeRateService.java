@@ -22,7 +22,7 @@ public class ExchangeRateService {
         return exchangeDao.save(exchangeRate);
     }
 
-    public boolean update(ExchangeRate exchangeRate) {
+    public ExchangeRate update(ExchangeRate exchangeRate) {
 
         return exchangeDao.update(exchangeRate);
     }

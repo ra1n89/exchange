@@ -125,8 +125,8 @@ public class ExchangeRatesServlet extends HttpServlet {
         try {
             int baseCurrencyId = currencyService.getCurrencyByCode(baseCurrency).getId();
             int targetCurrencyId = currencyService.getCurrencyByCode(targetCurrency).getId();
-            exchangeRateService.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, new BigDecimal(rateString)));
-
+            ExchangeRate exchangeRate = exchangeRateService.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, new BigDecimal(rateString)));
+            new ObjectMapper().writeValue(resp.getWriter(), exchangeRate);
         } catch (SQLException e) {
             System.out.println(e.getErrorCode() + e.getMessage());
             if (e.getMessage().contains("Currency not found")) {

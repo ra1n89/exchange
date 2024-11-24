@@ -1,5 +1,6 @@
 package ru.exchange.dao;
 
+import ru.exchange.model.Currensy;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.to.ExchangeRateTo;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface ExchangeDao {
     ExchangeRate save(ExchangeRate exchangeRate) throws SQLException;
 
-    boolean update(ExchangeRate exchangeRate);
+    ExchangeRate update(ExchangeRate exchangeRate);
 
     boolean delete(int id);
 
