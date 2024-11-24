@@ -20,11 +20,17 @@ public class ValidationUtil {
         }
     }
 
-    public static void validatePathExchangeRate(String pathInfo) throws MalformedURLException {
+    public static void validatePathExchangeRates(String pathInfo) throws MalformedURLException {
         if (pathInfo == null) {
             return;
         } else if (pathInfo.length() > 1) {
             throw new MalformedURLException("This URL is not exist");
+        }
+    }
+
+    public static void validatePathExchangeRate(String pathInfo) {
+        if (pathInfo.length() != 6) {
+            throw new IllegalArgumentException("Invalid currencies: " + pathInfo);
         }
     }
 }

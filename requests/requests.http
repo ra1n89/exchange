@@ -43,5 +43,13 @@ Accept:  application/json;charset=UTF-8
 GET http://localhost:8080/exchangeRate/USDRUB
 Accept:  application/json;charset=UTF-8
 
+### Try to get exchange rate between invalid currencies
+GET http://localhost:8080/exchangeRate/USDRU
+Accept:  application/json;charset=UTF-8
+
+### Try to get exchange rate with empty currencies
+GET http://localhost:8080/exchangeRate/
+Accept:  application/json;charset=UTF-8
+
 ### Get exchange amount between two currencies
 GET http://localhost:8080/exchange?from=AUD&to=USD&amount=10

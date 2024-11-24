@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.exchange.service.ExchangeRateService;
 import ru.exchange.to.ExchangeRateTo;
+import ru.exchange.utils.ValidationUtil;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,13 +23,21 @@ public class ExchangeRateServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String pathInfo = req.getPathInfo();
-        String code = pathInfo.substring(1);
+        String currenciesPair = pathInfo.substring(1);
+
+        try {
+            ValidationUtil.validatePathExchangeRate(currenciesPair);
+        } catch (IllegalArgumentException e){
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(e.getMessage());
+            return;
+        }
 
         ExchangeRateTo exchangeRateTo = null;
 
         try {
 
-            exchangeRateTo = exchangeRateService.getCurrencyByCode(code);
+            exchangeRateTo = exchangeRateService.getCurrencyByCode(currenciesPair);
 
         } catch (SQLException e) {
 

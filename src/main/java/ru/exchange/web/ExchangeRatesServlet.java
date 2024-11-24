@@ -1,7 +1,6 @@
 package ru.exchange.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.exchange.model.ExchangeRate;
 import ru.exchange.service.CurrencyService;
 import ru.exchange.service.ExchangeRateService;
-import ru.exchange.to.ExchangeRateTo;
 import ru.exchange.utils.ValidationUtil;
 
 import java.io.BufferedReader;
@@ -35,7 +33,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
 
         try {
-            ValidationUtil.validatePathExchangeRate(pathInfo);
+            ValidationUtil.validatePathExchangeRates(pathInfo);
         } catch (MalformedURLException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().println(e.getMessage());
