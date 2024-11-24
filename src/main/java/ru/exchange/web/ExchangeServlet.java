@@ -13,6 +13,7 @@ import ru.exchange.model.Currensy;
 import ru.exchange.service.CurrencyService;
 import ru.exchange.service.ExchangeRateService;
 import ru.exchange.to.ExchangeRateTo;
+import ru.exchange.utils.ValidationUtil;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,9 +33,11 @@ public class ExchangeServlet extends HttpServlet {
         String to = req.getParameter("to");
         String amountStr = req.getParameter("amount");
 
-        if (from == null || to == null || amountStr == null || from.length() != 3 || to.length() != 3) {
+        try {
+            ValidationUtil.validateExchangeParameters(from, to, amountStr);
+        } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().println("{\"error\": \"Missing required fields\"}");
+            resp.getWriter().println(e.getMessage());
             return;
         }
 

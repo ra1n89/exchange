@@ -1,5 +1,7 @@
 package ru.exchange.utils;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.net.MalformedURLException;
 
 public class ValidationUtil {
@@ -32,5 +34,28 @@ public class ValidationUtil {
         if (pathInfo.length() != 6) {
             throw new IllegalArgumentException("Invalid currencies: " + pathInfo);
         }
+    }
+
+    public static void validateExchangeParameters(String from, String to, String amountStr) {
+        if (from == null || to == null || amountStr == null) {
+            throw new IllegalArgumentException("All arguments must be provided ");
+        }
+
+        if (from.isEmpty() || to.isEmpty() || amountStr.isEmpty()) {
+            throw new IllegalArgumentException("All arguments must be provided ");
+        }
+
+        if (from.length() != 3 || to.length() != 3 || !isNumeric(amountStr)) {
+            throw new IllegalArgumentException("Invalid arguments provided ");
+        }
+    }
+
+    private static boolean isNumeric(String numberAsString){
+        try {
+            Double.parseDouble(numberAsString);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 }
