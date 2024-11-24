@@ -53,3 +53,15 @@ Accept:  application/json;charset=UTF-8
 
 ### Get exchange amount between two currencies
 GET http://localhost:8080/exchange?from=AUD&to=USD&amount=10
+
+### Try to get exchange amount with first invalid currency
+GET http://localhost:8080/exchange?from=AU&to=USD&amount=10
+
+### Try to get exchange amount with second invalid currency
+GET http://localhost:8080/exchange?from=AUD&to=US&amount=10
+
+### Try to get exchange amount with invalid amount
+GET http://localhost:8080/exchange?from=AUD&to=USD&amount=U
+
+### Try to get exchange amount with empty arguments
+GET http://localhost:8080/exchange?from=&to=&amount=
