@@ -5,6 +5,7 @@ import ru.exchange.model.ExchangeRate;
 import ru.exchange.to.ExchangeRateTo;
 import ru.exchange.utils.ConnectionManager;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, exchangeRate.getBaseCurrencyId());
             statement.setInt(2, exchangeRate.getTargetCurrencyId());
-            statement.setDouble(3, exchangeRate.getRate());
+            statement.setBigDecimal(3, exchangeRate.getRate());
             statement.executeUpdate();
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -44,7 +45,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
     public boolean update(ExchangeRate exchangeRate) {
         String sql = "UPDATE exchange_rates SET rate = ? WHERE base_currency_id = ? AND target_currency_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDouble(1, exchangeRate.getRate());
+            statement.setBigDecimal(1, exchangeRate.getRate());
             statement.setInt(2, exchangeRate.getBaseCurrencyId());
             statement.setInt(3, exchangeRate.getTargetCurrencyId());
             statement.executeUpdate();
@@ -112,7 +113,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
         int id;
         int baseCurrencyId;
         int targetCurrencyId;
-        double rate;
+        BigDecimal rate;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -120,7 +121,7 @@ public class JdbcExchangeRateCurrencyDao implements ExchangeDao {
                 id = resultSet.getInt("id");
                 baseCurrencyId = resultSet.getInt("base_currency_id");
                 targetCurrencyId = resultSet.getInt("target_currency_id");
-                rate = resultSet.getDouble("rate");
+                rate = resultSet.getBigDecimal("rate");
 
                 ExchangeRate exchangeRate = new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
 

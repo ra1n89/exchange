@@ -13,6 +13,7 @@ import ru.exchange.utils.ValidationUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -53,13 +54,15 @@ public class ExchangeRatesServlet extends HttpServlet {
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rateString = req.getParameter("rate");
 
+        //TODO: Validation + isNumeric
+
         if (baseCurrencyCode.isEmpty() || targetCurrencyCode.isEmpty() || rateString.isEmpty()) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().println("{\"error\": \"Missing required fields\"}");
             return;
         }
 
-        Double rate = Double.parseDouble(rateString);
+        BigDecimal rate = new BigDecimal(rateString);
 
         try {
             int baseId = currencyService.getCurrencyByCode(baseCurrencyCode).getId();
@@ -119,11 +122,11 @@ public class ExchangeRatesServlet extends HttpServlet {
         } else {
             rateString = parameters.get("rate");
         }
-
+        //TODO: VALIDATION + siNumeric?
         try {
             int baseCurrencyId = currencyService.getCurrencyByCode(baseCurrency).getId();
             int targetCurrencyId = currencyService.getCurrencyByCode(targetCurrency).getId();
-            exchangeRateService.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, Double.parseDouble(rateString)));
+            exchangeRateService.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, new BigDecimal(rateString)));
         } catch (SQLException e) {
             System.out.println(e.getErrorCode() + e.getMessage());
             if (e.getMessage().contains("Currency not found")) {

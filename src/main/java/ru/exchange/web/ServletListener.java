@@ -14,6 +14,7 @@ import java.sql.Statement;
 public class ServletListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
+
         // Initialize the database connection
         Connection connection = ConnectionManager.getConnection();
 
