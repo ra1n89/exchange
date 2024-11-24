@@ -26,8 +26,6 @@ public class Servlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");
 
-        System.out.println("hello");
-
         currencyService.createTable();
 
         try {

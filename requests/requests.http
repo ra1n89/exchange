@@ -36,7 +36,7 @@ fullName=European Currency
 
 
 ### Get all exchange rates
-GET http://localhost:8080/exchangeRate/
+GET http://localhost:8080/exchangeRates/
 Accept:  application/json;charset=UTF-8
 
 ### Get exchange rate between two currencies
