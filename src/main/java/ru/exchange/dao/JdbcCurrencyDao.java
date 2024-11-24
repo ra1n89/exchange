@@ -20,11 +20,15 @@ public class JdbcCurrencyDao implements CurrencyDao {
     public Currensy save(Currensy currensy) throws SQLException {
         String sql = "INSERT INTO currencies (code, sign, full_name) VALUES (?, ?, ?)";
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, currensy.getCode());
             statement.setString(2, currensy.getSign());
             statement.setString(3, currensy.getFullName());
             statement.executeUpdate();
+
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            generatedKeys.next();
+            currensy.setId(generatedKeys.getInt(1));
 
         } catch (SQLException e) {
             throw e;
