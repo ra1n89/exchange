@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 @WebFilter("/*")
-public class FilterServlet implements Filter {
+public class EncodingFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);

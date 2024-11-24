@@ -27,9 +27,6 @@ public class ExchangeRatesServlet extends HttpServlet {
     CurrencyService currencyService = CurrencyService.getInstance();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/json");
 
         String pathInfo = req.getPathInfo();
 
