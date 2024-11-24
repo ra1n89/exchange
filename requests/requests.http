@@ -1,21 +1,21 @@
-### Get all currencies
+### Get all currencies - 200 OK
 GET http://localhost:8080/currencies/
 Accept:  application/json;charset=UTF-8
 
-### Get certain currency
+### Get certain currency - 200 OK
 GET http://localhost:8080/currency/USD
 Accept:  application/json;charset=UTF-8
 
-### Get invalid currency
+### Get invalid currency - 400 Bad request
 GET http://localhost:8080/currency/US
 Accept:  application/json;charset=UTF-8
 
-### Add certain currency
+### Add new currency - 201 OK
 POST http://localhost:8080/currencies/
 Content-Type: application/x-www-form-urlencoded
 
 code=EUR &
-sign=€ &
+sign=E &
 fullName=European Currency
 
 ### Add invalid code in currency
