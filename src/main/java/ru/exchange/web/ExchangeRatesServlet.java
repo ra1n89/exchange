@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@WebServlet("/exchangeRates/")
+@WebServlet("/exchangeRates/*")
 public class ExchangeRatesServlet extends HttpServlet {
     ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
     CurrencyService currencyService = CurrencyService.getInstance();
@@ -84,16 +84,19 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String pathInfo = req.getPathInfo();
+        String pathInfo = req.getPathInfo().substring(1);
         String baseCurrency;
         String targetCurrency;
         String rateString;
         BufferedReader reader = req.getReader();
 
-        if (pathInfo == null || pathInfo.length() != 7) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); //
-            return;
+        try {
+            ValidationUtil.validatePathExchangeRate(pathInfo);
+        } catch (IllegalArgumentException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(e.getMessage());
         }
+
         String body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
 
         Map<String, String> parameters = new HashMap<String, String>();
@@ -109,9 +112,8 @@ public class ExchangeRatesServlet extends HttpServlet {
             parameters.put(pairArray[0], pairArray[1]);
         }
 
-        String code = pathInfo.substring(1);
-        baseCurrency = code.substring(0, 3);
-        targetCurrency = code.substring(3, 6);
+        baseCurrency = pathInfo.substring(0, 3);
+        targetCurrency = pathInfo.substring(3, 6);
 
         if (!parameters.containsKey("rate") || parameters.get("rate") == null || parameters.get("rate").isEmpty() || !isNumeric(parameters.get("rate"))) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); //
@@ -124,6 +126,7 @@ public class ExchangeRatesServlet extends HttpServlet {
             int baseCurrencyId = currencyService.getCurrencyByCode(baseCurrency).getId();
             int targetCurrencyId = currencyService.getCurrencyByCode(targetCurrency).getId();
             exchangeRateService.update(new ExchangeRate(baseCurrencyId, targetCurrencyId, new BigDecimal(rateString)));
+
         } catch (SQLException e) {
             System.out.println(e.getErrorCode() + e.getMessage());
             if (e.getMessage().contains("Currency not found")) {

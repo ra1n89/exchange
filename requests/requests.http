@@ -65,3 +65,15 @@ GET http://localhost:8080/exchange?from=AUD&to=USD&amount=U
 
 ### Try to get exchange amount with empty arguments
 GET http://localhost:8080/exchange?from=&to=&amount=
+
+### Update currency rate
+PATCH http://localhost:8080/exchangeRates/USDRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=2
+
+### Try to Update currency rate with invalid currency
+PATCH http://localhost:8080/exchangeRates/USDRU
+Content-Type: application/x-www-form-urlencoded
+
+rate=1
